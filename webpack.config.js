@@ -7,8 +7,8 @@ module.exports = {
   target: 'node',
   entry: './src/main.ts',
   output: {
-    filename: `worker.${mode}.js`,
-    path: path.join(__dirname, 'dist'),
+    filename: `index.js`,
+    path: path.join(__dirname, 'build'),
   },
   mode,
   resolve: {
