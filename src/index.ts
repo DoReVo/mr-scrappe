@@ -1,5 +1,9 @@
-import { handleRequest } from './handler'
+import { startScrape } from './main'
 
 addEventListener('fetch', (event) => {
-  event.respondWith(handleRequest(event.request))
+  event.respondWith(new Response('Mr-Scrappe is running'))
+})
+
+addEventListener('scheduled', (event) => {
+  event.waitUntil(startScrape())
 })
