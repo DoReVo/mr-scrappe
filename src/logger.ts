@@ -1,5 +1,5 @@
 import winston, { format, Logger, transports } from 'winston'
-const { combine, json, errors, cli } = format
+const { combine, json, errors, cli, timestamp } = format
 
 let logger: Logger
 
@@ -13,7 +13,7 @@ const devLogger = winston.createLogger({
 // Production environment logger
 const prodLogger = winston.createLogger({
   transports: [new transports.Console()],
-  format: combine(errors({ stack: true }), json()),
+  format: combine(errors({ stack: true }), timestamp(), json()),
   handleExceptions: true,
 })
 
