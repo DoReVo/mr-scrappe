@@ -1,5 +1,6 @@
+dist
 node_modules
-build
+transpiled
+worker
 .env
-core
-src/screenshots
+src/config/Shoppe.ts
