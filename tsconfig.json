@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "module": "commonjs",
-    "target": "esnext",
+    "target": "es2015",
     "lib": [
       "esnext",
       "webworker"
