@@ -126,7 +126,7 @@ export async function startScrape() {
 }
 
 cron
-  .schedule('* * * * *', async () => {
+  .schedule('*/10 * * * *', async () => {
     startScrape()
   })
   .start()
