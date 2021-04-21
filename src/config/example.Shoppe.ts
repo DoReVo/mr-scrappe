@@ -7,6 +7,10 @@ export const ShoppeConfig = {
   searchAPIUrl: 'https://shopee.com.my/api/v4/search/search_items?',
   // API to get shop info
   shopInfoAPIUrl: 'https://shopee.com.my/api/v4/shop/get_shop_detail?',
+  // URL to be pasted into browser to go to the shop,
+  // Must be concat with /:shopid/search. So end result will look like,
+  // https://shopee.com.my/shop/:shopid/search
+  shopBrowserURL: 'https://shopee.com.my/shop',
   // Query strings for searchAPIUrl
   qs: {
     by: 'relevancy',
