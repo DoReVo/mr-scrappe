@@ -5,3 +5,4 @@ worker
 .env
 src/config/Shoppe.ts
 wrangler.toml
+build
