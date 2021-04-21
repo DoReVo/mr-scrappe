@@ -1,5 +1,6 @@
 import winston, { format, Logger, transports } from 'winston'
 const { combine, json, errors, cli, timestamp } = format
+import Sentry from 'winston-transport-sentry-node'
 
 let logger: Logger
 
@@ -12,7 +13,11 @@ const devLogger = winston.createLogger({
 
 // Production environment logger
 const prodLogger = winston.createLogger({
-  transports: [new transports.Console()],
+  transports: [
+    new Sentry({
+      sentry: { dsn: process.env.SENTRY_DSN },
+    }),
+  ],
   format: combine(errors({ stack: true }), timestamp(), json()),
   handleExceptions: true,
 })
