@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack",
     "dev": "NODE_ENV=development npm run build",
-    "dev:core": "nodemon --watch './**/*.ts' --exec 'ts-node' ./src/index.ts",
+    "dev:core": "NODE_ENV=development nodemon --watch './**/*.ts' --exec 'ts-node' ./src/main.ts",
     "format": "prettier --write '**/*.{ts,js,css,json,md}'",
     "test:clean": "rimraf ./transpiled/src ./transpiled/test",
     "test": "npm run test:clean && npm run transpile && mocha --require source-map-support/register --recursive transpiled/test",
@@ -20,7 +20,7 @@
     "@types/cheerio": "^0.22.28",
     "@types/mocha": "^7.0.2",
     "@types/node": "^14.14.41",
-    "@types/pino": "^6.3.7",
+    "@types/node-fetch": "^2.5.10",
     "chai": "^4.3.4",
     "mocha": "^8.3.2",
     "nodemon": "^2.0.7",
@@ -36,7 +36,7 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.6",
     "dotenv": "^8.2.0",
-    "pino": "^6.11.3",
-    "pino-pretty": "^4.7.1"
+    "node-fetch": "^2.6.1",
+    "winston": "^3.3.3"
   }
 }
