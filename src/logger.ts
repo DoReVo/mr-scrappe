@@ -17,6 +17,7 @@ const prodLogger = winston.createLogger({
     new Sentry({
       sentry: { dsn: process.env.SENTRY_DSN },
     }),
+    new transports.Console(),
   ],
   format: combine(errors({ stack: true }), timestamp(), json()),
   handleExceptions: true,
