@@ -2,10 +2,9 @@ require('dotenv').config()
 import querystring from 'querystring'
 
 import { ShoppeConfig } from './config/Shoppe'
-import { fetchWrapper } from './fetch'
+import { fetchWrapper, fetchPostWrapper } from './fetch'
 import { logger } from './logger'
 import { Shoppe } from './types/Shoppe'
-import { WebhookClient } from 'discord.js'
 
 export async function startScrape() {
   try {
@@ -76,18 +75,23 @@ export async function startScrape() {
               childLogger.info(
                 `Matched found! NAME: ${info.name} | PRICE: ${info.price} | SHOP: ${shopInfo.data.name}`,
               )
-              const discord = new WebhookClient(
-                process.env.DISCORD_WEBHOOK_ID as string,
-                process.env.DISCORD_WEBHOOK_TOKEN as string,
-              )
 
               // Post message to discord channel
-              await discord.send(
-                `${'```'}Matched found! \nNAME: ${info.name}\nPRICE: RM${
-                  info.price
-                }\nSTOCK: ${info.stock}\nSHOP: ${
-                  shopInfo.data.name
-                }\nSHOP_URL: ${info.shopURL}${'```'}`,
+              const msg = `${'```'}Matched found! \nNAME: ${
+                info.name
+              }\nPRICE: RM${info.price}\nSTOCK: ${info.stock}\nSHOP: ${
+                shopInfo.data.name
+              }\nSHOP_URL: ${info.shopURL}${'```'}`
+
+              await fetchPostWrapper(
+                process.env.DISCORD_WEBHOOK_URL as string,
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ content: msg }),
+                },
               )
             }
           }

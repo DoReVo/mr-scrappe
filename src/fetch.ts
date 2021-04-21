@@ -7,4 +7,12 @@ const fetchWrapper = async (url: string) => {
   return await response.json()
 }
 
-export { fetchWrapper }
+const fetchPostWrapper = async (url: string, options: any) => {
+  let response
+  if (process.env.NODE_ENV === 'development')
+    response = await nodeFetch(url, options)
+  else response = await fetch(url, options)
+  return await response.json()
+}
+
+export { fetchWrapper, fetchPostWrapper }
