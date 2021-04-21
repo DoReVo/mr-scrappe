@@ -1,35 +1,34 @@
-require("dotenv").config();
-import puppeteer from "puppeteer-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import items from "./warehouse/index";
-import * as cron from "node-cron";
+require('dotenv').config()
+import querystring from 'querystring'
+import { ShoppeConfig } from './config/Shoppe'
+import { fetchWrapper } from './fetch'
+import { logger } from './logger'
 
-async function main() {
-  puppeteer.use(StealthPlugin());
-  const browser = await puppeteer.launch({
-    headless: true,
-    defaultViewport: null,
-  });
-  const shoppeMain = await browser.newPage();
-  // Go to shoppe and select language
-  await shoppeMain.goto("https://shopee.com.my");
+export async function startScrape() {
   try {
-    await shoppeMain.click(".language-selection__list-item button");
+    logger.info('Start shoppe scrapping')
+    // Scrape shoppe store
+    for (const shop of ShoppeConfig.shopList) {
+      // Get shop info
+      const shopInfoQs = querystring.encode({ shopid: shop })
+      const shopInfoURL = `${ShoppeConfig.shopInfoAPIUrl}${shopInfoQs}`
+      const childLogger = logger.child({ shopId: shop })
+
+      const response = await fetchWrapper(shopInfoURL)
+      console.log(await response.json())
+
+      childLogger.info(`Scrapping shop id: ${shop}`)
+      // match_id and keyword will be used as query string
+      // when calling shoppe API
+      const keyword: string = ShoppeConfig.searchQuery
+      const match_id: string = shop
+      const qs = querystring.encode({ ...ShoppeConfig.qs, keyword, match_id })
+      const fullUrl = `${ShoppeConfig.searchAPIUrl}${qs}`
+      childLogger.info(fullUrl)
+    }
   } catch (error) {
-    console.log("No select language modal found");
+    logger.error(error)
   }
-
-  // List of items to scrape
-  for (const item of items) {
-    await item.scrape(browser);
-  }
-
-  await browser.close();
 }
 
-// logger.info("Starting server...");
-// main();
-
-cron.schedule("* * * * *", async () => {
-  await main();
-});
+startScrape()
