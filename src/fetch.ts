@@ -7,4 +7,9 @@ const fetchWrapper = async (url: string) => {
   return await response.json()
 }
 
-export { fetchWrapper }
+const fetchPostWrapper = async (url: string, options: any) => {
+  if (process.env.NODE_ENV === 'development') await nodeFetch(url, options)
+  else await nodeFetch(url, options)
+}
+
+export { fetchWrapper, fetchPostWrapper }
