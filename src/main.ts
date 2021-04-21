@@ -104,3 +104,5 @@ export async function startScrape() {
     logger.error(error)
   }
 }
+
+startScrape()
