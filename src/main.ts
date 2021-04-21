@@ -5,10 +5,13 @@ import { ShoppeConfig } from './config/Shoppe'
 import { fetchWrapper, fetchPostWrapper } from './fetch'
 import { logger } from './logger'
 import { Shoppe } from './types/Shoppe'
-
+import cron from 'node-cron'
 export async function startScrape() {
   try {
     logger.info('Start shoppe scrapping')
+
+    // Message to be send to discord
+    let msgList = []
     // Scrape shoppe store
     for (const shop of ShoppeConfig.shopList) {
       const childLogger = logger.child({
@@ -64,6 +67,7 @@ export async function startScrape() {
             price: (item.item_basic.price / 100000).toFixed(2),
             stock: item.item_basic.stock,
           }
+
           // Check if product name match with at least 1 of the
           // specified keywords in our config
           for (const keyword of ShoppeConfig.productMatch) {
@@ -76,23 +80,13 @@ export async function startScrape() {
                 `Matched found! NAME: ${info.name} | PRICE: ${info.price} | SHOP: ${shopInfo.data.name}`,
               )
 
-              // Post message to discord channel
               const msg = `${'```'}Matched found! \nNAME: ${
                 info.name
               }\nPRICE: RM${info.price}\nSTOCK: ${info.stock}\nSHOP: ${
                 shopInfo.data.name
               }\nSHOP_URL: ${info.shopURL}${'```'}`
 
-              await fetchPostWrapper(
-                process.env.DISCORD_WEBHOOK_URL as string,
-                {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({ content: msg }),
-                },
-              )
+              msgList.push(msg)
             }
           }
         }
@@ -100,9 +94,39 @@ export async function startScrape() {
         logger.error(error)
       }
     }
+
+    // Only send message to discord if there is a match
+    if (msgList.length !== 0) {
+      // Send delimeter to channel
+      await fetchPostWrapper(process.env.DISCORD_WEBHOOK_URL as string, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content:
+            '------------------------------------------------------------------------------------------------',
+        }),
+      })
+
+      for (const msg of msgList) {
+        // Post message to discord channel
+        await fetchPostWrapper(process.env.DISCORD_WEBHOOK_URL as string, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ content: msg }),
+        })
+      }
+    }
   } catch (error) {
     logger.error(error)
   }
 }
 
-startScrape()
+cron
+  .schedule('* * * * *', async () => {
+    startScrape()
+  })
+  .start()
