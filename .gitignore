@@ -4,3 +4,4 @@ transpiled
 worker
 .env
 src/config/Shoppe.ts
+wrangler.toml
