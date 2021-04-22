@@ -1,7 +1,7 @@
 /* A logger that will send the log to a discord channel */
 const logger = async (
   msg: string,
-  url: string = process.env.DISCORD_LOG_URL as string,
+  url: string = DISCORD_LOG_URL as string,
 ) => {
   // MY format and time
   const timestamp = new Date().toLocaleString('en-MY', {

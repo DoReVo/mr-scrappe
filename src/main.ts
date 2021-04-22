@@ -1,4 +1,3 @@
-require('dotenv').config()
 import querystring from 'querystring'
 
 import { ShoppeConfig } from './config/Shoppe'
@@ -86,12 +85,12 @@ export async function startScrape() {
       // Send delimeter to channel
       await logger(
         '```---ATTENTION! Match found!---```',
-        process.env.DISCORD_WEBHOOK_URL as string,
+        DISCORD_WEBHOOK_URL as string,
       )
 
       for (const msg of msgList) {
         // Post message to discord channel
-        await logger(msg, process.env.DISCORD_WEBHOOK_URL as string)
+        await logger(msg, DISCORD_WEBHOOK_URL as string)
       }
     }
 
