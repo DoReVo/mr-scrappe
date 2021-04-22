@@ -10,6 +10,8 @@ const logger = async (
   // Add timestamp the the log message
   const formattedMsg = `${'```'}${timestamp} ${msg}${'```'}`
 
+  console.log(formattedMsg)
+
   await fetch(url, {
     method: 'POST',
     headers: {
