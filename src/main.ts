@@ -2,32 +2,23 @@ require('dotenv').config()
 import querystring from 'querystring'
 
 import { ShoppeConfig } from './config/Shoppe'
-import { fetchWrapper, fetchPostWrapper } from './fetch'
 import { logger } from './logger'
 import { Shoppe } from './types/Shoppe'
-import cron from 'node-cron'
 export async function startScrape() {
   try {
-    logger.info('Start shoppe scrapping')
+    await logger('Start shoppe scrape process')
 
     // Message to be send to discord
     let msgList = []
     // Scrape shoppe store
     for (const shop of ShoppeConfig.shopList) {
-      const childLogger = logger.child({
-        category: 'Shoppe',
-        shopId: shop,
-      })
-
       try {
         // Get shop info
         const shopInfoQs = querystring.encode({ shopid: shop })
         const shopInfoURL = `${ShoppeConfig.shopInfoAPIUrl}${shopInfoQs}`
-        const shopInfo: Shoppe.Shop.Info = await fetchWrapper(shopInfoURL)
+        const res = await fetch(shopInfoURL)
+        const shopInfo: Shoppe.Shop.Info = await res.json()
 
-        childLogger.info(
-          `Trying to scrape shop | shop id: ${shop} | name: ${shopInfo.data.name}|`,
-        )
         // match_id and keyword will be used as query string
         // when calling shoppe API
         const keyword: string = ShoppeConfig.searchQuery
@@ -36,11 +27,10 @@ export async function startScrape() {
         const fullUrl = `${ShoppeConfig.searchAPIUrl}${qs}`
 
         // Call API to search the shop
-        const shopSearchResult: Shoppe.Shop.Search.Result = await fetchWrapper(
-          fullUrl,
-        )
+        const searchRes = await fetch(fullUrl)
+        const shopSearchResult: Shoppe.Shop.Search.Result = await searchRes.json()
 
-        childLogger.info(
+        await logger(
           `Number of items found: ${shopSearchResult.items.length} | shop id: ${shop} | name : ${shopInfo.data.name}`,
         )
 
@@ -50,8 +40,8 @@ export async function startScrape() {
           shopSearchResult.items.length === shopSearchResult.total_count
 
         if (!countMatch)
-          childLogger.warn(
-            'total_count from API calls does not match number of items returned',
+          await logger(
+            'WARNING!: total_count from API calls does not match number of items returned',
           )
 
         for (const item of shopSearchResult.items) {
@@ -76,10 +66,6 @@ export async function startScrape() {
               .match(keyword)
 
             if (match) {
-              childLogger.info(
-                `Matched found! NAME: ${info.name} | PRICE: ${info.price} | SHOP: ${shopInfo.data.name}`,
-              )
-
               const msg = `${'```'}Matched found! \nNAME: ${
                 info.name
               }\nPRICE: RM${info.price}\nSTOCK: ${info.stock}\nSHOP: ${
@@ -91,42 +77,26 @@ export async function startScrape() {
           }
         }
       } catch (error) {
-        logger.error(error)
+        await logger(error)
       }
     }
 
     // Only send message to discord if there is a match
     if (msgList.length !== 0) {
       // Send delimeter to channel
-      await fetchPostWrapper(process.env.DISCORD_WEBHOOK_URL as string, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          content:
-            '------------------------------------------------------------------------------------------------',
-        }),
-      })
+      await logger(
+        '```---ATTENTION! Match found!---```',
+        process.env.DISCORD_WEBHOOK_URL as string,
+      )
 
       for (const msg of msgList) {
         // Post message to discord channel
-        await fetchPostWrapper(process.env.DISCORD_WEBHOOK_URL as string, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ content: msg }),
-        })
+        await logger(msg, process.env.DISCORD_WEBHOOK_URL as string)
       }
     }
+
+    await logger('Finished shoppe scrape process')
   } catch (error) {
-    logger.error(error)
+    await logger(error)
   }
 }
-
-cron
-  .schedule('*/10 * * * *', async () => {
-    startScrape()
-  })
-  .start()
