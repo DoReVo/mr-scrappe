@@ -1,29 +1,24 @@
-import winston, { format, Logger, transports } from 'winston'
-const { combine, json, errors, cli, timestamp } = format
-import Sentry from 'winston-transport-sentry-node'
+/* A logger that will send the log to a discord channel */
+const logger = async (
+  msg: string,
+  url: string = process.env.DISCORD_LOG_URL as string,
+) => {
+  // MY format and time
+  const timestamp = new Date().toLocaleString('en-MY', {
+    timeZone: 'asia/kuala_lumpur',
+  })
+  // Add timestamp the the log message
+  const formattedMsg = `${'```'}${timestamp} ${msg}${'```'}`
 
-let logger: Logger
-
-// Development environment logger
-const devLogger = winston.createLogger({
-  transports: [new transports.Console()],
-  format: combine(errors({ stack: true }), cli()),
-  handleExceptions: true,
-})
-
-// Production environment logger
-const prodLogger = winston.createLogger({
-  transports: [
-    new Sentry({
-      sentry: { dsn: process.env.SENTRY_DSN },
+  await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      content: formattedMsg,
     }),
-    new transports.Console(),
-  ],
-  format: combine(errors({ stack: true }), timestamp(), json()),
-  handleExceptions: true,
-})
-
-if (process.env.NODE_ENV === 'development') logger = devLogger
-else logger = prodLogger
+  })
+}
 
 export { logger }
