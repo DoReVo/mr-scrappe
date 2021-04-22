@@ -3,6 +3,6 @@ node_modules
 transpiled
 worker
 .env
-src/config/Shoppe.ts
+src/config/Shoppe.ts*
 wrangler.toml
 build
