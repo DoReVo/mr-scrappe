@@ -1,7 +1,7 @@
 import querystring from 'querystring'
 
 import { ShoppeConfig } from './config/Shoppe'
-import { logger } from './logger'
+import { logger, alertLogger } from './logger'
 import { Shoppe } from './types/Shoppe'
 export async function startScrape() {
   try {
@@ -83,14 +83,15 @@ export async function startScrape() {
     // Only send message to discord if there is a match
     if (msgList.length !== 0) {
       // Send delimeter to channel
-      await logger(
-        '```---ATTENTION! Match found!---```',
+
+      await alertLogger(
+        '---ATTENTION! Match found!---',
         DISCORD_WEBHOOK_URL as string,
       )
 
       for (const msg of msgList) {
         // Post message to discord channel
-        await logger(msg, DISCORD_WEBHOOK_URL as string)
+        await alertLogger(msg, DISCORD_WEBHOOK_URL as string)
       }
     }
 
