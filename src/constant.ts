@@ -1,5 +1,5 @@
 /* Class names for shoppe HTML elements */
-
+/* Ignore this, will not be used for now */
 export const SHOPPE_STORE_CARD_ITEM = '.shop-search-result-view__item'
 export const SHOPPE_STORE_PRODUCT_TITLE = '.yQmmFK._1POlWt._36CEnF'
 export const SHOPPE_STORE_PRODUCT_PRICE = '.WTFwws._1lK1eK._5W0f35'
