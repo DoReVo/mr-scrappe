@@ -64,12 +64,8 @@ export async function startScrape() {
               .toLocaleLowerCase()
               .match(keyword)
 
-            if (match) {
-              const msg = `${'```'}Matched found! \nNAME: ${
-                info.name
-              }\nPRICE: RM${info.price}\nSTOCK: ${info.stock}\nSHOP: ${
-                shopInfo.data.name
-              }\nSHOP_URL: ${info.shopURL}${'```'}`
+            if (match && info.stock >= 1) {
+              const msg = `Matched found! \nNAME: ${info.name}\nPRICE: RM${info.price}\nSTOCK: ${info.stock}\nSHOP: ${shopInfo.data.name}\nSHOP_URL: ${info.shopURL}`
 
               msgList.push(msg)
             }
