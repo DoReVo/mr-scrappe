@@ -15,7 +15,7 @@ export const ShoppeConfig = {
   qs: {
     by: 'relevancy',
     entry_point: 'ShopByPDP',
-    limit: 500,
+    limit: 100,
     newest: 0,
     order: 'desc',
     page_type: 'shop',
