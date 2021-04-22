@@ -5,3 +5,6 @@ route = ""
 workers_dev = true
 webpack_config = "webpack.config.js"
 name = "mr-scrappe"
+
+[triggers]
+crons=["*/10 * * * *"]
