@@ -32,3 +32,8 @@ interface shopScrapeInfo {
    */
   discordUrl: string
 }
+
+interface AlertMessage {
+  msg: string
+  discordUrl: string
+}
