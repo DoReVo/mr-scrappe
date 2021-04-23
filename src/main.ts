@@ -30,7 +30,7 @@ export async function startScrape() {
         const shopSearchResult: Shoppe.Shop.Search.Result = await searchRes.json()
 
         await logger(
-          `Number of items found: ${shopSearchResult.items.length} | shop id: ${shop} | name : ${shopInfo.data.name}`,
+          `Number of items found: ${shopSearchResult.items.length} | shop id: ${shop.shopId} | name : ${shopInfo.data.name}`,
         )
 
         // Total result length should be same as total_count from API call,
@@ -51,7 +51,7 @@ export async function startScrape() {
           */
           const info = {
             shop: shopInfo.data.name,
-            shopURL: `${ShoppeConfig.shopBrowserUrl}/${shop}/search`,
+            shopURL: `${ShoppeConfig.shopBrowserUrl}/${shop.shopId}/search`,
             name: item.item_basic.name,
             price: (item.item_basic.price / 100000).toFixed(2),
             stock: item.item_basic.stock,
