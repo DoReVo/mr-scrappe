@@ -1,5 +1,5 @@
 /* A logger that will send the log to a discord channel */
-const logger = async (msg: string, url: string = DISCORD_LOG_URL as string) => {
+const logger = async (msg: string, url: string = LOG_CHANNEL as string) => {
   // MY format and time
   const timestamp = new Date().toLocaleString('en-MY', {
     timeZone: 'asia/kuala_lumpur',
@@ -21,10 +21,7 @@ const logger = async (msg: string, url: string = DISCORD_LOG_URL as string) => {
 }
 
 /* Will send alerts to discord channel */
-const alertLogger = async (
-  msg: string,
-  url: string = DISCORD_WEBHOOK_URL as string,
-) => {
+const alertLogger = async (msg: string, url: string) => {
   // MY format and time
   const timestamp = new Date().toLocaleString('en-MY', {
     timeZone: 'asia/kuala_lumpur',
