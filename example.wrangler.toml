@@ -1,3 +1,9 @@
+# What to do with this?
+# 1. Copy and rename to wrangler.toml
+# 2. Change config accordingly (Refer cloudflare worker wrangler documentation)
+# 3. run wrangler publish to deploy or wrangler dev to run in dev mode
+# 4. Profit ???
+
 type = "webpack"
 zone_id = ""
 account_id = ""
