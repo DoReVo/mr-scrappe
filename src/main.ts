@@ -73,6 +73,7 @@ export async function startScrape() {
         }
       } catch (error) {
         await logger(error)
+        throw new Error(error.message)
       }
     }
 
@@ -87,5 +88,6 @@ export async function startScrape() {
     await logger('Finished shoppe scrape process')
   } catch (error) {
     await logger(error)
+    throw new Error(error.message)
   }
 }
