@@ -19,6 +19,8 @@ interface queryString {
 
 interface shopScrapeInfo {
   shopId: string
+  /* Name of shop */
+  shopName: string
   /** Search query to further narrow down the
    * list of products on the shop homepage */
   searchQuery: string

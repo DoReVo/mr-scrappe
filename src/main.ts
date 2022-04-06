@@ -1,23 +1,15 @@
 import querystring from 'querystring'
 
 import { ShoppeConfig } from './config/Shoppe'
-import { logger, alertLogger } from './logger'
+import { alertLogger } from './logger'
 import { Shoppe } from './types/Shoppe'
 export async function startScrape() {
   try {
-    await logger('Start shoppe scrape process')
-
     // Message to be send to discord
     let msgList: AlertMessage[] = []
     // Scrape shoppe store
     for (const shop of ShoppeConfig.shopList) {
       try {
-        // Get shop info
-        const shopInfoQs = querystring.encode({ shopid: shop.shopId })
-        const shopInfoURL = `${ShoppeConfig.shopInfoAPIUrl}${shopInfoQs}`
-        const res = await fetch(shopInfoURL)
-        const shopInfo: Shoppe.Shop.Info = await res.json()
-
         // match_id and keyword will be used as query string
         // when calling shoppe API
         const keyword: string = shop.searchQuery
@@ -29,20 +21,6 @@ export async function startScrape() {
         const searchRes = await fetch(fullUrl)
         const shopSearchResult: Shoppe.Shop.Search.Result = await searchRes.json()
 
-        await logger(
-          `Number of items found: ${shopSearchResult.items.length} | shop id: ${shop.shopId} | name : ${shopInfo.data.name}`,
-        )
-
-        // Total result length should be same as total_count from API call,
-        // Otherwise, there are more pages that we have not retrieve
-        const countMatch =
-          shopSearchResult.items.length === shopSearchResult.total_count
-
-        if (!countMatch)
-          await logger(
-            'WARNING!: total_count from API calls does not match number of items returned',
-          )
-
         for (const item of shopSearchResult.items) {
           /* Information to get
             1. Name
@@ -50,7 +28,7 @@ export async function startScrape() {
             3. Stock
           */
           const info = {
-            shop: shopInfo.data.name,
+            shop: shop.shopName,
             shopURL: `${ShoppeConfig.shopBrowserUrl}/${shop.shopId}/search`,
             name: item.item_basic.name,
             price: (item.item_basic.price / 100000).toFixed(2),
@@ -65,15 +43,14 @@ export async function startScrape() {
               .match(keyword)
 
             if (match && info.stock >= 1) {
-              const msg = `Matched found! \nNAME: ${info.name}\nPRICE: RM${info.price}\nSTOCK: ${info.stock}\nSHOP: ${shopInfo.data.name}\nSHOP_URL: ${info.shopURL}`
+              const msg = `NAME: ${info.name}\nPRICE: RM${info.price}\nSTOCK: ${info.stock}\nSHOP: ${shop.shopName}\nSHOP_URL: ${info.shopURL}`
 
               msgList.push({ msg, discordUrl: shop.discordUrl })
             }
           }
         }
       } catch (error) {
-        await logger(error)
-        throw new Error(error.message)
+        console.log(error)
       }
     }
 
@@ -84,10 +61,7 @@ export async function startScrape() {
         await alertLogger(alertMsg.msg, alertMsg.discordUrl)
       }
     }
-
-    await logger('Finished shoppe scrape process')
   } catch (error) {
-    await logger(error)
-    throw new Error(error.message)
+    console.log(error)
   }
 }

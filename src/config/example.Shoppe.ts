@@ -32,6 +32,7 @@ export const ShoppeConfig: ShoppeConfig = {
    * EXAMPLE: 
    * {
    *  shopId: '12345',
+   *  shopName: 'My name'
    *  searchQuery: 'ryzen',
    *  productMatch: ['2600', '2600'],
    *  discordUrl: CPU_CHANNEL,
